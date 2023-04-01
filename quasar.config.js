@@ -145,8 +145,8 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: `House Alert`,
-        short_name: `House Alert`,
+        name: `Quasar App`,
+        short_name: `Quasar App`,
         description: `A Quasar Project`,
         display: "standalone",
         orientation: "portrait",
@@ -210,7 +210,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: "house-alert",
+        appId: "quasar-app",
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain

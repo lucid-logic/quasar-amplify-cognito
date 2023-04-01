@@ -13,7 +13,7 @@ import "@aws-amplify/ui-vue/styles.css";
 
 import { Amplify, Auth } from "aws-amplify";
 import awsconfig from "../aws-exports";
-awsconfig.oauth.domain = "app.signin.housealert.com.au";
+awsconfig.oauth.domain = "app.signin.example.com";
 import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appstore.js";
 

@@ -1,8 +1,8 @@
 {
-  "name": "house-alert",
+  "name": "quasar-app",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "House Alert",
+  "productName": "Quasar App",
   "author": "Lucid Logic",
   "private": true,
   "scripts": {

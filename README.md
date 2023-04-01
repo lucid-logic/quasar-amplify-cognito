@@ -17,6 +17,9 @@ amplify add auth
 
 Set redirects to ttp://localhost:8080/
 
+Update AMplifyLogin.vue
+`awsconfig.oauth.domain = "app.signin.example.com";`
+
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 
 ```bash

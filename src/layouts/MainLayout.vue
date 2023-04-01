@@ -62,9 +62,7 @@
     </q-drawer>
     <q-footer elevated>
       <q-toolbar>
-        <q-toolbar-title
-          ><div id="houseAlertId" :class="userId"></div
-        ></q-toolbar-title>
+        <q-toolbar-title></q-toolbar-title>
       </q-toolbar>
     </q-footer>
     <q-page-container>
