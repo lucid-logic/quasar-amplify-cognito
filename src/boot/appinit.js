@@ -1,10 +1,42 @@
 import { boot } from "quasar/wrappers";
 import { API, Auth } from "aws-amplify";
 import Amplify from "@aws-amplify/core";
-import awsconfig from "../aws-exports";
 import { useAppStore } from "../stores/appstore.js";
 
-Amplify.configure(awsconfig);
+import awsConfig from "../aws-exports.js";
+// Assuming you have two redirect URIs, and the first is for localhost and second is for production
+const isLocalhost = Boolean(
+  window.location.hostname === "localhost" ||
+    // [::1] is the IPv6 localhost address.
+    window.location.hostname === "[::1]" ||
+    // 127.0.0.1/8 is considered localhost for IPv4.
+    window.location.hostname.match(
+      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+    )
+);
+console.log("isLocalhost", isLocalhost);
+const [localRedirectSignIn, productionRedirectSignIn] =
+  awsConfig.oauth.redirectSignIn.split(",");
+
+const [localRedirectSignOut, productionRedirectSignOut] =
+  awsConfig.oauth.redirectSignOut.split(",");
+
+const updatedAwsConfig = {
+  ...awsConfig,
+  oauth: {
+    ...awsConfig.oauth,
+    redirectSignIn: isLocalhost
+      ? localRedirectSignIn
+      : productionRedirectSignIn,
+    redirectSignOut: isLocalhost
+      ? localRedirectSignOut
+      : productionRedirectSignOut,
+  },
+};
+
+Amplify.configure(updatedAwsConfig);
+
+//Amplify.configure(awsconfig);
 //if (awsconfig.aws_user_pools_id === "us-east-1_M7n6RNrq9") {
 //}
 // "async" is optional;
