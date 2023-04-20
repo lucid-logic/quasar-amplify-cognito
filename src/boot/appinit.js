@@ -44,7 +44,11 @@ Amplify.configure(updatedAwsConfig);
 export default boot(async ({ router } /* { app, router, ... } */) => {
   // something to do
   const appStore = useAppStore();
-  await appStore.init();
+  try {
+    const user = await Auth.currentUserPoolUser();
+
+    await appStore.init();
+  } catch (e) {}
 
   router.beforeEach(async function (to, from, next) {
     //        if(localStorage.llat){
