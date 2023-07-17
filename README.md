@@ -51,3 +51,7 @@ quasar build
 ### Customize the configuration
 
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js).
+
+### Start Android Emulator
+
+C:\Users\jon\AppData\Local\Android\Sdk\emulator\emulator.exe -feature -Vulkan -avd Pixel_6_API_33

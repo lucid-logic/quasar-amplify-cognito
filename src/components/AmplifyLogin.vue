@@ -35,14 +35,18 @@ const [localRedirectSignOut, productionRedirectSignOut] =
 const updatedAwsConfig = {
   ...awsConfig,
   oauth: {
-    ...awsConfig.oauth,
-    redirectSignIn: isLocalhost
-      ? localRedirectSignIn
-      : productionRedirectSignIn,
-    redirectSignOut: isLocalhost
-      ? localRedirectSignOut
-      : productionRedirectSignOut,
-  },
+        ...awsConfig.oauth,
+        redirectSignIn: isCapacitor
+          ? process.env.APP_COGNITO_REDIRECT
+          : isLocalhost && !isCapacitor
+          ? localRedirectSignIn
+          : productionRedirectSignIn,
+        redirectSignOut:
+          isLocalhost && !isCapacitor
+            ? localRedirectSignOut
+            : productionRedirectSignOut,
+      },
+
 };
 updatedAwsConfig.oauth.domain = "app.signin.housealert.com.au";
 
