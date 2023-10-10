@@ -1,7 +1,7 @@
 <template>
-  <authenticator>
-    <template v-slot="{ user, signOut }">
-      <h1>Hello {{ user.username }}!</h1>
+  <authenticator :initial-state="authState">
+    <template v-slot="{ signOut }">
+      <q-btn label="Continue..." @click="cont" />
       <button @click="signOut">Sign Out</button>
     </template>
   </authenticator>
@@ -13,10 +13,13 @@ import "@aws-amplify/ui-vue/styles.css";
 
 import { Amplify, Auth } from "aws-amplify";
 import { useRouter } from "vue-router";
-import { useAppStore } from "../stores/appstore.js";
+import { useAppStore } from "src/stores/AppStore.js";
+import { useQuasar } from "quasar";
 
 import awsConfig from "../aws-exports.js";
 // Assuming you have two redirect URIs, and the first is for localhost and second is for production
+//const isCapacitor = false;
+
 const isLocalhost = Boolean(
   window.location.hostname === "localhost" ||
     // [::1] is the IPv6 localhost address.
@@ -26,15 +29,48 @@ const isLocalhost = Boolean(
       /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
     )
 );
-const [localRedirectSignIn, productionRedirectSignIn] =
+var [localRedirectSignIn, productionRedirectSignIn] =
   awsConfig.oauth.redirectSignIn.split(",");
 
-const [localRedirectSignOut, productionRedirectSignOut] =
+var [localRedirectSignOut, productionRedirectSignOut] =
   awsConfig.oauth.redirectSignOut.split(",");
 
-const updatedAwsConfig = {
-  ...awsConfig,
-  oauth: {
+if (window.location.hostname.startsWith("app-dev.")) {
+  productionRedirectSignIn = productionRedirectSignIn.replace(
+    "app.",
+    "app-dev."
+  );
+  productionRedirectSignOut = productionRedirectSignOut.replace(
+    "app.",
+    "app-dev."
+  );
+}
+
+import {
+  defineComponent,
+  toRefs,
+  watchEffect,
+  watch,
+  computed,
+  ref,
+} from "vue";
+import { useRoute } from "vue-router";
+
+export default defineComponent({
+  components: {
+    Authenticator,
+  },
+  setup() {
+    const appStore = useAppStore();
+    const router = useRouter();
+    const $q = useQuasar();
+    const isCapacitor = $q.platform.is.nativeMobile;
+    const pageRoute = useRoute();
+    var loggedInRedirect = ref(false);
+
+    const updatedAwsConfig = {
+      ...awsConfig,
+      oauth: {
         ...awsConfig.oauth,
         redirectSignIn: isCapacitor
           ? process.env.APP_COGNITO_REDIRECT
@@ -46,38 +82,62 @@ const updatedAwsConfig = {
             ? localRedirectSignOut
             : productionRedirectSignOut,
       },
+    };
+    //updatedAwsConfig.oauth.domain = "app.signin.kasi.run";
 
-};
-updatedAwsConfig.oauth.domain = "app.signin.housealert.com.au";
+    console.log(updatedAwsConfig);
 
-Amplify.configure(updatedAwsConfig);
-
-import { defineComponent, toRefs, watchEffect } from "vue";
-
-export default defineComponent({
-  components: {
-    Authenticator,
-  },
-  setup() {
-    const router = useRouter();
+    Amplify.configure(updatedAwsConfig);
 
     const { route, user, signOut } = toRefs(useAuthenticator());
-    const appStore = useAppStore();
 
     localStorage.setItem("user", JSON.stringify(user.value));
+
+    const authState = computed(() => {
+      if (pageRoute.query && pageRoute.query.signup) {
+        return "signUp";
+      } else {
+        return "signIn";
+      }
+    });
+
+    async function redirectAfterLogin() {
+      if (loggedInRedirect.value && loading) {
+        return router.push({ name: "dashboard" });
+      }
+    }
+
+    const loading = computed(() => {
+      return appStore.loading;
+    });
+
+    watch(
+      [loading, loggedInRedirect],
+      ([newLoading, newPath], [oldLoading, oldPath]) => {
+        redirectAfterLogin();
+      }
+    );
+
+    function cont() {
+      redirectAfterLogin();
+    }
     watchEffect(async () => {
       if (user.value) {
         try {
-          let loginUser = await Auth.currentAuthenticatedUser();
-          //          localStorage.setItem("user", JSON.stringify(user.value));
-          console.log("loginUser", loginUser); // undefined
-          appStore.login();
-          router.push("/");
+          loggedInRedirect.value = true;
+          redirectAfterLogin();
+          //router.push({ name: "start" });
         } catch (e) {
           console.log("error", e);
+          appStore.logMessage("error 1");
+          appStore.logMessage(JSON.stringify(e));
         }
       }
     });
+    return {
+      authState,
+      cont,
+    };
   },
 });
 </script>

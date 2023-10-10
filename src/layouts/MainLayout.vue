@@ -24,7 +24,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered v-if="loggedIn">
+    <q-drawer v-model="leftDrawerOpen" bordered v-if="loggedIn">
       <q-list>
         <q-item-label header> Menu </q-item-label>
         <q-item clickable @click="loginClick">
@@ -75,7 +75,7 @@
 import { defineComponent, ref, toRefs, computed, watchEffect } from "vue";
 
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-vue";
-import { useAppStore } from "../stores/appstore.js";
+import { useAppStore } from "../stores/AppStore.js";
 import { useRouter } from "vue-router";
 import { Amplify, Auth } from "aws-amplify";
 const { route, user, signOut } = toRefs(useAuthenticator());
@@ -117,6 +117,7 @@ export default defineComponent({
         } catch (error) {
           console.log("error signing out: ", error);
         }
+        router.push({ name: "auth" });
       } else {
         router.push({ name: "auth" });
       }

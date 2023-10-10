@@ -23,6 +23,22 @@ export const useAppStore = defineStore("counter", {
     increment() {
       this.counter++;
     },
+    async checkSynchUpdate(wait = false) {
+      //   const response = await cognitoFetch("user/synchupdate", {
+      //     method: "POST",
+      //   });
+      //   const newSynchUpdate = response.synchUpdated;
+      //   if (this.synchUpdate != newSynchUpdate || newSynchUpdate == 0) {
+      //     this.synchUpdate = newSynchUpdate;
+      //     if (wait) {
+      //       await this.init(true);
+      //     } else {
+      //       this.init(true);
+      //     }
+      //   } else {
+      //   }
+      //   this.synchUpdate = newSynchUpdate;
+    },
     async login() {
       const response = await cognitoFetch("prop/login", {
         method: "POST",

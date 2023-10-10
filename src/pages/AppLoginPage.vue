@@ -1,8 +1,9 @@
 <template>
-  <q-page padding>
-    <amplify-login v-if="isCapacitor" />
+  <q-page class="flex flex-center">
+    <amplify-login v-if="false" />
     <a v-else :href="fullPath"> Open in the App </a>
   </q-page>
+  <q-spinner />
 </template>
 
 <script>
@@ -21,6 +22,17 @@ export default {
   },
   // name: 'PageName',
   setup() {
+    if (window.location.hostname.startsWith("app-dev.")) {
+      productionRedirectSignIn = productionRedirectSignIn.replace(
+        "app.",
+        "app-dev."
+      );
+      productionRedirectSignOut = productionRedirectSignOut.replace(
+        "app.",
+        "app-dev."
+      );
+    }
+
     const $q = useQuasar();
     const isCapacitor = $q.platform.is.nativeMobile;
 
@@ -93,7 +105,11 @@ export default {
 
     console.log(route.fullPath);
     const fullPath = computed(
-      () => "https://freakyrunning.com" + route.fullPath
+      () =>
+        // (window.location.hostname === "app-dev.kasi.run"
+        //   ? "https://app-dev.kasi.run"
+        //   : "https://app.kasi.run") + route.fullPath
+        "https://" + window.location.hostname + route.fullPath
     );
 
     return {

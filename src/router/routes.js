@@ -26,6 +26,12 @@ const routes = [
         component: () => import("pages/AccountPage.vue"),
         meta: { requiresAuth: true },
       },
+      {
+        path: "applogin",
+        name: "applogin",
+        component: () => import("pages/AppLoginPage.vue"),
+        meta: { authPage: true },
+      },
     ],
   },
 
